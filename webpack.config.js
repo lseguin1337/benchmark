@@ -1,13 +1,15 @@
 const path = require('path');
 const webpack = require('webpack');
 const fs = require('fs');
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 function config(isIE, fileSuffix) {
+  const outputSuffix = `${isIE ? '-es5' : '-es2017'}`;
   return {
     mode: 'production',
     entry: `./src/test${fileSuffix}.ts`,
     output: {
-      filename: `bundle${isIE ? '-es5' : '-es2017'}.js`,
+      filename: `bundle${outputSuffix}.js`,
       path: path.resolve(__dirname, 'dist', `test${fileSuffix}`)
     },
     module: {
@@ -30,11 +32,17 @@ function config(isIE, fileSuffix) {
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],
     },
-    plugins: isIE ? [
-      new webpack.ProvidePlugin({
-        Promise: ['promise-polyfill', 'default'] // import Promise polyfill for IE
-      })
-    ] : [],
+    plugins: [
+      ...(isIE ? [
+        new webpack.ProvidePlugin({
+          Promise: ['promise-polyfill', 'default'] // import Promise polyfill for IE
+        })
+      ] : []),
+      new HtmlWebpackPlugin({
+        filename: `index${outputSuffix}.html`,
+        template: path.resolve(__dirname, './index.html'),
+      }),
+    ],
   }
 }
 
