@@ -1,4 +1,4 @@
-import { syncBench } from "./bench";
+import { syncBench } from "./bench_sync";
 
 class Foo {
   bar1() {}

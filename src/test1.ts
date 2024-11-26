@@ -1,7 +1,7 @@
-import { asyncBench } from './bench';
+import { asyncBench } from './bench_async';
 
-async function wait() {
+async function test1() {
   await new Promise(resolve => setTimeout(resolve, 0));
 }
 
-asyncBench(wait, 1000);
+asyncBench(test1, 1000);
