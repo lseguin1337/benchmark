@@ -45,7 +45,7 @@ function config(isIE, fileSuffix) {
   }
 }
 
-const files = fs.readdirSync(__dirname + '/src').filter(file => /^test/.test(file)).map((name) => name.match(/^test([0-9]+)\.ts$/)[1]);
+const files = fs.readdirSync(__dirname + '/src').map((name) => name.match(/^test([0-9]+)\.ts$/)?.[1]).filter((name) => !!name);
 
 module.exports = files.flatMap((fileIndex) => {
   return [
