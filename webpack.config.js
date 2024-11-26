@@ -18,12 +18,7 @@ function config(isIE, fileSuffix) {
           test: /\.tsx?$/,
           use: [
             ...(isIE ? ['babel-loader'] : []), // convert es2017 into es5 using babel
-            {
-              loader: 'ts-loader',
-              options: {
-                transpileOnly: true
-              }
-            }
+            'ts-loader'
           ],
           exclude: /node_modules/,
         }
@@ -38,13 +33,14 @@ function config(isIE, fileSuffix) {
           Promise: ['promise-polyfill', 'default'] // import Promise polyfill for IE
         })
       ] : []),
+      new webpack.optimize.LimitChunkCountPlugin({
+        maxChunks: 1
+      }),
+      // just to be able to run the test into a browser
       new HtmlWebpackPlugin({
         filename: `index${outputSuffix}.html`,
         template: path.resolve(__dirname, './index.html'),
       }),
-      new webpack.optimize.LimitChunkCountPlugin({
-        maxChunks: 1
-      })
     ],
   }
 }
