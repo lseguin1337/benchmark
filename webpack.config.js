@@ -42,6 +42,9 @@ function config(isIE, fileSuffix) {
         filename: `index${outputSuffix}.html`,
         template: path.resolve(__dirname, './index.html'),
       }),
+      new webpack.optimize.LimitChunkCountPlugin({
+        maxChunks: 1
+      })
     ],
   }
 }
