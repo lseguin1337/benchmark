@@ -28,12 +28,14 @@ function config(isIE, fileSuffix) {
       extensions: ['.tsx', '.ts', '.js'],
     },
     plugins: [
-      ...(isIE ? [
-        new webpack.ProvidePlugin({
-          Promise: ['promise-polyfill', 'default'] // import Promise polyfill for IE
-        })
-      ] : []),
+      new webpack.ProvidePlugin({
+        ...(isIE ? {
+          // declare Promise for IE use case
+          Promise: ['promise-polyfill', 'default']
+        } : null),
+      }),
       new webpack.optimize.LimitChunkCountPlugin({
+        // To garanti we have one single chunk in the end
         maxChunks: 1
       }),
       // just to be able to run the test into a browser
@@ -45,7 +47,9 @@ function config(isIE, fileSuffix) {
   }
 }
 
-const files = fs.readdirSync(__dirname + '/src').map((name) => name.match(/^test([0-9]+)\.ts$/)?.[1]).filter((name) => !!name);
+const files = fs.readdirSync(__dirname + '/src')
+  .map((name) => name.match(/^test([0-9]+)\.ts$/)?.[1])
+  .filter((name) => !!name);
 
 module.exports = files.flatMap((fileIndex) => {
   return [
