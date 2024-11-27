@@ -3,22 +3,26 @@ const webpack = require('webpack');
 const fs = require('fs');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
-function config(isIE, fileSuffix) {
-  const outputSuffix = `${isIE ? '-es5' : '-es2017'}`;
+function config(testId, target, activePromisePolyfill) {
   return {
     mode: 'production',
-    entry: `./src/test${fileSuffix}.ts`,
+    entry: `./src/test${testId}.ts`,
     output: {
-      filename: `bundle${outputSuffix}.js`,
-      path: path.resolve(__dirname, 'dist', `test${fileSuffix}`)
+      filename: `bundle-${target}.js`,
+      path: path.resolve(__dirname, 'dist', `test${testId}`)
     },
     module: {
       rules: [
         {
           test: /\.tsx?$/,
           use: [
-            ...(isIE ? ['babel-loader'] : []), // convert es2017 into es5 using babel
-            'ts-loader'
+            {
+              loader: 'ts-loader',
+              options: {
+                context: __dirname,
+                configFile: path.resolve(__dirname, `tsconfig.${target}.json`),
+              }
+            }
           ],
           exclude: /node_modules/,
         }
@@ -29,7 +33,7 @@ function config(isIE, fileSuffix) {
     },
     plugins: [
       new webpack.ProvidePlugin({
-        ...(isIE ? {
+        ...(activePromisePolyfill ? {
           // declare Promise for IE use case
           Promise: ['promise-polyfill', 'default']
         } : null),
@@ -40,20 +44,20 @@ function config(isIE, fileSuffix) {
       }),
       // just to be able to run the test into a browser
       new HtmlWebpackPlugin({
-        filename: `index${outputSuffix}.html`,
+        filename: `index-${target}.html`,
         template: path.resolve(__dirname, './index.html'),
       }),
     ],
   }
 }
 
-const files = fs.readdirSync(__dirname + '/src')
+module.exports = fs.readdirSync(__dirname + '/src')
   .map((name) => name.match(/^test([0-9]+)\.ts$/)?.[1])
-  .filter((name) => !!name);
-
-module.exports = files.flatMap((fileIndex) => {
-  return [
-    config(true, fileIndex),
-    config(false, fileIndex),
-  ];
-});
+  .filter((name) => !!name)
+  .flatMap((testId) => {
+    return [
+      config(testId, 'es5', true),
+      config(testId, 'es6', false),
+      config(testId, 'es2017', false),
+    ];
+  });

@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.common",
+  "compilerOptions": {
+    "target": "es2017"
+  }
+}
