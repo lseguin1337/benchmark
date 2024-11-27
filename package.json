@@ -20,6 +20,7 @@
     "webpack-virtual-modules": "0.6.2"
   },
   "dependencies": {
+    "core-js-pure": "3.39.0",
     "promise-polyfill": "8.3.0"
   }
 }

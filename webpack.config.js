@@ -34,7 +34,8 @@ function config(testId, target, activePromisePolyfill) {
     plugins: [
       new webpack.ProvidePlugin({
         ...(activePromisePolyfill ? {
-          Promise: ['promise-polyfill', 'default']
+          // Promise: ['promise-polyfill', 'default'],
+          Promise: ['core-js-pure/stable/promise/index.js']
         } : null),
       }),
       new webpack.optimize.LimitChunkCountPlugin({
