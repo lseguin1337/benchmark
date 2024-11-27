@@ -34,7 +34,6 @@ function config(testId, target, activePromisePolyfill) {
     plugins: [
       new webpack.ProvidePlugin({
         ...(activePromisePolyfill ? {
-          // declare Promise for IE use case
           Promise: ['promise-polyfill', 'default']
         } : null),
       }),
